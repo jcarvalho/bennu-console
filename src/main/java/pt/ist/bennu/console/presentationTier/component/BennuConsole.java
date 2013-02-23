@@ -3,12 +3,9 @@ package pt.ist.bennu.console.presentationTier.component;
 import java.util.Map;
 
 import org.vaadin.console.Console;
-import org.vaadin.console.ObjectInspector;
 
-import pt.ist.bennu.console.presentationTier.commands.DBCommand;
-import pt.ist.bennu.console.presentationTier.commands.PropertyCommand;
+import pt.ist.bennu.console.groovy.GroovyConsoleHandler;
 import pt.ist.bennu.core.applicationTier.Authenticate;
-import pt.ist.bennu.core.domain.MyOrg;
 import pt.ist.bennu.core.domain.RoleType;
 import pt.ist.bennu.core.domain.User;
 import pt.ist.vaadinframework.annotation.EmbeddedComponent;
@@ -31,6 +28,10 @@ public class BennuConsole extends CustomComponent implements EmbeddedComponentCo
         layout.addComponent(new Label("Bennu Console"));
         layout.addComponent(console);
 
+        GroovyConsoleHandler handler = new GroovyConsoleHandler();
+
+        console.setHandler(handler);
+
         console.setPs("> ");
         console.setCols(110);
         console.setRows(40);
@@ -39,10 +40,7 @@ public class BennuConsole extends CustomComponent implements EmbeddedComponentCo
         console.reset();
         console.focus();
 
-        console.addCommandProvider(new ObjectInspector(MyOrg.getInstance()));
-
-        console.addCommand("prop", new PropertyCommand());
-        console.addCommand("db", new DBCommand());
+        handler.execute("init()");
 
         setCompositionRoot(layout);
     }
