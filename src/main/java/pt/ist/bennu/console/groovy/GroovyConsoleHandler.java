@@ -4,8 +4,10 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +51,7 @@ public class GroovyConsoleHandler implements Handler {
     @Override
     public void inputReceived(Console console, String lastInput) {
         String result = execute(lastInput);
-        console.println(result);
+        console.print(result);
         console.prompt();
     }
 
@@ -84,48 +86,60 @@ public class GroovyConsoleHandler implements Handler {
     }
 
     public String init() {
+        setupBindings();
         StringBuffer buffer = new StringBuffer();
 
+        buffer.append("  Welcome to Bennu Console              \n");
         buffer.append("                        ,===========    \n");
         buffer.append("                      :==============,  \n");
         buffer.append("                    :=================, \n");
         buffer.append("                   ~=================== \n");
         buffer.append("                  :==================== \n");
         buffer.append("                  ===================== \n");
-        buffer.append("                  ====================: \n");
-        buffer.append("                  =======+============  \n");
-        buffer.append("                  ,==~    :=========:   \n");
-        buffer.append("                   ~+    :=~~+=====~    \n");
-        buffer.append("        ~=========       ==  ~========= \n");
-        buffer.append("      ~=============,    =======~       \n");
-        buffer.append("    ~================:   ========:      \n");
-        buffer.append("   +==================~ ,==========     \n");
-        buffer.append(" ,===================== ,==========,    \n");
-        buffer.append(" ====================== ,=========:     \n");
-        buffer.append("======================= ,=======        \n");
-        buffer.append("======================: ,=======        \n");
-        buffer.append("======================  ,=======        \n");
-        buffer.append("=====================,  :=======        \n");
-        buffer.append("=====================   ~=======        \n");
-        buffer.append("===========~~========  ~========        \n");
-        buffer.append("=========     =======~==========        \n");
-        buffer.append(":=======:     ,==================,      \n");
-        buffer.append("  ======~      ====================     \n");
-        buffer.append("   ======     ,====================:    \n");
-        buffer.append("    ~=====    =====================~    \n");
-        buffer.append("        ,,    =====================     \n");
-        buffer.append("              ===================:      \n");
-        buffer.append("              ,~~~~~~~~~~~~~~~~~        \n");
-
-        buffer.append("Available bindings:\n");
-
-        for (String var : initialBindings) {
-            buffer.append("  " + var + "\t= ");
-            buffer.append(execute(var));
-        }
-        buffer.append("\n");
+        buffer.append("                  ====================:      Available Bindings: \n");
+        buffer.append("                  =======+============       " + getNextBinding() + "\n");
+        buffer.append("                  ,==~    :=========:        " + getNextBinding() + "\n");
+        buffer.append("                   ~+    :=~~+=====~         " + getNextBinding() + "\n");
+        buffer.append("        ~=========       ==  ~=========      " + getNextBinding() + "\n");
+        buffer.append("      ~=============,    =======~            " + getNextBinding() + "\n");
+        buffer.append("    ~================:   ========:           " + getNextBinding() + "\n");
+        buffer.append("   +==================~ ,==========          " + getNextBinding() + "\n");
+        buffer.append(" ,===================== ,==========,         " + getNextBinding() + "\n");
+        buffer.append(" ====================== ,=========:          " + getNextBinding() + "\n");
+        buffer.append("======================= ,=======             " + getNextBinding() + "\n");
+        buffer.append("======================: ,=======             " + getNextBinding() + "\n");
+        buffer.append("======================  ,=======             " + getNextBinding() + "\n");
+        buffer.append("=====================,  :=======             " + getNextBinding() + "\n");
+        buffer.append("=====================   ~=======             " + getNextBinding() + "\n");
+        buffer.append("===========~~========  ~========             " + getNextBinding() + "\n");
+        buffer.append("=========     =======~==========             " + getNextBinding() + "\n");
+        buffer.append(":=======:     ,==================,           " + getNextBinding() + "\n");
+        buffer.append("  ======~      ====================          " + getNextBinding() + "\n");
+        buffer.append("   ======     ,====================:         " + getNextBinding() + "\n");
+        buffer.append("    ~=====    =====================~         " + getNextBinding() + "\n");
+        buffer.append("        ,,    =====================          " + getNextBinding() + "\n");
+        buffer.append("              ===================:           " + getNextBinding() + "\n");
+        buffer.append("              ,~~~~~~~~~~~~~~~~~             " + getNextBinding() + "\n");
 
         return buffer.toString();
+    }
+
+    private void setupBindings() {
+        Collection<String> vars = new ArrayList<String>();
+        for (String var : initialBindings) {
+            vars.add("  " + var + " = ");
+            vars.add("  \t" + execute(var).trim());
+        }
+        nextBinding = vars.iterator();
+    }
+
+    private Iterator<String> nextBinding;
+
+    private String getNextBinding() {
+        if (!nextBinding.hasNext()) {
+            return "";
+        }
+        return nextBinding.next();
     }
 
     private void resetIO() {

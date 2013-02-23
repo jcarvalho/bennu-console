@@ -8,6 +8,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import pt.ist.bennu.core._development.PropertiesManager;
 import pt.ist.fenixframework.FenixFramework;
 
 import com.google.common.collect.Sets;
@@ -17,7 +18,8 @@ public class GroovyImports {
     public static Collection<String> getImports() {
 
         @SuppressWarnings("unchecked")
-        Set<Class<? extends Object>> classes = Sets.newHashSet(FenixFramework.class, DateTime.class, LocalDate.class);
+        Set<Class<? extends Object>> classes =
+                Sets.newHashSet(FenixFramework.class, DateTime.class, LocalDate.class, PropertiesManager.class);
 
         Set<String> packages = Sets.newHashSet("pt.ist.bennu.core", "pt.ist.bennu.core.domain");
 
